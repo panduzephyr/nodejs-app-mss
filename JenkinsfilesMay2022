@@ -1,0 +1,26 @@
+node{
+//Checkout the code stage
+stage('CheckoutCode'){
+git branch: 'dev', credentialsId: '67b36730-1097-4a12-8bbd-f63ce27c537b', url: 'https://github.com/panduzephyr/nodejs-app-mss.git'
+}
+//Build
+stage('Build'){
+nodejs(nodeJSInstallationName: 'nodejs18.6.0'){
+sh "npm install"
+}
+}
+stage('ExecuteSonarQubeRepot'){
+nodejs(nodeJSInstallationName: 'nodejs18.6.0'){
+sh "npm run sonar"
+}
+}
+//Upload Artifacts Into Nexus
+stage('UploadArtifactsIntoNexus'){
+sh "npm publish"
+}
+
+// Run NodeJs App
+stage('RunNodeJSApp'){
+sh "npm run app.js &"
+}
+}
